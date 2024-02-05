@@ -15,6 +15,7 @@ jobs:
 
       - run: |
           pip install poetry
+          poetry version patch
           poetry build
 
       - uses: actions/upload-artifact@v3
