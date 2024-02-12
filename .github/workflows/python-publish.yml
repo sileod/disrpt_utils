@@ -1,3 +1,4 @@
+
 name: Publish
 on:
   push:
@@ -19,15 +20,7 @@ jobs:
           NEW_VERSION="\"${GITHUB_REF_NAME#refs/tags/}\""
           sed -i "s/version = $OLD_VERSION/version = $NEW_VERSION/g" pyproject.toml
 
-      - name: Commit Changes
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          git commit -a -m "Update version number to $NEW_VERSION"
-          git push origin HEAD:main
-
   build:
-    needs: update-version-number
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -45,10 +38,13 @@ jobs:
           path: ./dist
 
   pypi-publish:
-    needs: build
+    needs: ['build']
     environment: 'publish'
+
     name: upload release to PyPI
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/download-artifact@v3
 
