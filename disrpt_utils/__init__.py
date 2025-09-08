@@ -88,8 +88,8 @@ def load_dataset(config_name, ext,corpora_paths,data_url=DATA_URL, restore_under
     splits = 'train','dev','test'
     urls= [ f"{data_url}/{config_name}/{config_name}_{split}.{ext}" for ext in exts for split in splits]
     paths = [download_file(config_name,u) for u in urls]
-    docs2text = harvest_text(fetch_files(config_name,corpora_paths=corpora_paths))
     if restore_underscore:
+        docs2text = harvest_text(fetch_files(config_name,corpora_paths=corpora_paths))
         restore_docs(user_data_dir(config_name),docs2text)
     get_split = lambda x:x.split('_')[-1].split('.')[0].replace('dev','validation')
     split_file = {get_split(p):p for p in paths if p.endswith(ext)}
