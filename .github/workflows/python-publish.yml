@@ -1,54 +1,17 @@
-
-name: Publish
+name: Publish to PyPI.org
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [published]
 jobs:
-  update-version-number:
+  pypi:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3 # Use the latest stable version
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - name: Update Version Number
-        run: |
-          OLD_VERSION=$(cat pyproject.toml | grep ^version | cut -d '"' -f 2)
-          OLD_VERSION="\"$OLD_VERSION\""
-          NEW_VERSION="\"${GITHUB_REF_NAME#refs/tags/}\""
-          sed -i "s/version = $OLD_VERSION/version = $NEW_VERSION/g" pyproject.toml
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-python@v3
-        with:
-          python-version: 3.11
-
-      - run: |
-          pip install poetry
-          poetry build
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./dist
-
-  pypi-publish:
-    needs: ['build']
-    environment: 'publish'
-
-    name: upload release to PyPI
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/download-artifact@v3
-
-      - name: Publish package distributions to PyPI
+      - run: python3 -m pip install --upgrade build && python3 -m build
+      - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages_dir: artifact/
+          password: ${{ secrets.PYPI_API_TOKEN }}

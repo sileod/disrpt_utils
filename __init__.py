@@ -8,7 +8,7 @@ from datasets import Dataset, DatasetDict
 from datasets.features import Features
 from appdirs import user_data_dir
 from pathlib import Path
-from .process_underscore import restore_docs
+from .process_underscore impZort restore_docs
 
 DATA_URL="https://raw.githubusercontent.com/disrpt/sharedtask2023/main/data"
 
