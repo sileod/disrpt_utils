@@ -431,7 +431,15 @@ def restore_docs(path_to_underscores,text_dict):
 					if "GUM_" in docname and "reddit" not in docname:  # Only Reddit documents need reconstruction in GUM
 						output.append(line)
 						continue
-					doc, unit1_toks, unit2_toks, unit1_txt, unit2_txt, s1_toks, s2_toks, unit1_sent, unit2_sent, direction, orig_label, label = line.split("\t")
+					
+					#doc, unit1_toks, unit2_toks, unit1_txt, unit2_txt, s1_toks, s2_toks, unit1_sent, unit2_sent, direction, orig_label, label = line.split("\t")
+
+					(doc, unit1_toks, unit2_toks, unit1_txt, unit2_txt,
+					u1_raw, u2_raw, s1_toks, s2_toks,
+					unit1_sent, unit2_sent, direction, rel_type,
+					orig_label, label) = line.split("\t")
+
+
 					underscore_len += unit1_txt.count("_") + unit2_txt.count("_") + unit1_sent.count("_") + unit2_sent.count("_")
 					if underscore_len == 0:
 						sys.stderr.write("! Non-underscored file detected - " + os.path.basename(file_) + "\n")
@@ -456,7 +464,8 @@ def restore_docs(path_to_underscores,text_dict):
 			docname = ""
 			for line in lines:
 				line = line.strip()
-				if "# newdoc_id " in line:
+				if line.startswith("# newdoc"):
+					line = line.replace("# newdoc id", "# newdoc_id")
 					tid = 0
 					if parse_text !="":
 						if not tokfile:
